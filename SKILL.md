@@ -9,8 +9,8 @@ argument-hint: to-url [-t type] [-e engine] <file-or-text> | to-diagram <url>
 Convert between diagram source and shareable URLs.
 
 Two engines:
-- **mermaid.live** — interactive editor (default for Mermaid diagrams)
-- **kroki.io** — universal renderer (default for PlantUML, Graphviz, and all other types)
+- **kroki.io** — universal renderer (default for all diagram types)
+- **mermaid.live** — interactive editor (alternative for Mermaid, use `-e mermaid_dot_live`)
 
 The encoding script is bundled at `${CLAUDE_SKILL_DIR}/diagram_url.py`.
 
@@ -35,10 +35,10 @@ Run:
 python3 "${CLAUDE_SKILL_DIR}/diagram_url.py" to-url -t <type> <file>
 ```
 
-To force a specific engine (e.g. kroki for mermaid):
+To use mermaid.live instead of kroki for Mermaid diagrams:
 
 ```bash
-python3 "${CLAUDE_SKILL_DIR}/diagram_url.py" to-url -t mermaid -e kroki <file>
+python3 "${CLAUDE_SKILL_DIR}/diagram_url.py" to-url -t mermaid -e mermaid_dot_live <file>
 ```
 
 Or pipe from stdin:

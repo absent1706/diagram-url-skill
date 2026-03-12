@@ -3,8 +3,8 @@
 diagram_url.py — Convert between diagram source and shareable URLs.
 
 Supports two engines:
-  - mermaid.live (default for Mermaid diagrams) — interactive editor
-  - kroki.io (default for everything else) — universal renderer
+  - kroki.io (default for all diagram types) — universal renderer
+  - mermaid.live (alternative for Mermaid diagrams) — interactive editor
 
 No dependencies, pure Python 3 stdlib.
 
@@ -89,12 +89,12 @@ def to_url(
 ) -> str:
     """Encode a diagram into a shareable URL.
 
-    engine: "mermaid" | "kroki" | None (auto — mermaid.live for mermaid, kroki for others)
+    engine: "mermaid_dot_live" | "kroki" | None (auto — kroki.io for all types)
     """
     if engine is None:
-        engine = "mermaid" if diagram_type == "mermaid" else "kroki"
+        engine = "kroki"
 
-    if engine == "mermaid":
+    if engine == "mermaid_dot_live":
         if diagram_type != "mermaid":
             raise ValueError("mermaid.live engine only supports mermaid diagrams")
         return _mermaid_encode(diagram)
@@ -146,7 +146,7 @@ def main():
     )
     p_encode.add_argument(
         "-e", "--engine",
-        choices=["mermaid", "kroki"],
+        choices=["mermaid_dot_live", "kroki"],
         default=None,
         help="Engine: mermaid (mermaid.live) or kroki (kroki.io). Default: auto",
     )
