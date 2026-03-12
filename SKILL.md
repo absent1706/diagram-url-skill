@@ -61,6 +61,10 @@ python3 "${CLAUDE_SKILL_DIR}/diagram_url.py" to-diagram '<url>'
 
 Return the diagram text to the user in a code block with the appropriate language tag.
 
-### No subcommand / ambiguous
+### No explicit subcommand — infer from input
 
-If the user just invokes `/diagram-url` without clear intent, ask whether they want to encode (to-url) or decode (to-diagram).
+If the user omits `to-url` / `to-diagram`, infer the intent:
+- **Input looks like a URL** (starts with `http://` or `https://`, contains `kroki.io` or `#pako:`) → treat as `to-diagram`
+- **Input looks like a file path** (ends with `.mmd`, `.puml`, `.gv`, etc., or is a valid path) → treat as `to-url`
+- **Input looks like diagram text** (code block, or starts with `graph`, `sequenceDiagram`, `@startuml`, `digraph`, etc.) → treat as `to-url`
+- **Truly ambiguous** → ask the user
