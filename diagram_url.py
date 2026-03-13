@@ -81,6 +81,22 @@ def _kroki_decode(url: str) -> tuple[str, str, str]:
 # Public API
 # ---------------------------------------------------------------------------
 
+_C4_PATTERNS = re.compile(
+    r"(?:C4-PlantUML|C4_Component|C4_Container|C4_Context|C4_Deployment|C4_Dynamic"
+    r"|Person\(|Person_Ext\(|System\(|System_Ext\(|System_Boundary\("
+    r"|Container\(|Container_Ext\(|Container_Boundary\("
+    r"|Component\(|Component_Ext\(|ComponentDb\("
+    r"|Deployment_Node\(|Node\()"
+)
+
+
+def _detect_diagram_type(diagram: str, declared_type: str) -> str:
+    """Auto-upgrade 'plantuml' to 'c4plantuml' when C4 macros are detected."""
+    if declared_type == "plantuml" and _C4_PATTERNS.search(diagram):
+        return "c4plantuml"
+    return declared_type
+
+
 def to_url(
     diagram: str,
     diagram_type: str = "mermaid",
@@ -93,6 +109,8 @@ def to_url(
     """
     if engine is None:
         engine = "kroki"
+
+    diagram_type = _detect_diagram_type(diagram, diagram_type)
 
     if engine == "mermaid_dot_live":
         if diagram_type != "mermaid":

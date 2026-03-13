@@ -29,6 +29,8 @@ Input can be:
 
 Determine the diagram type from context (mermaid, plantuml, graphviz, etc.). Default to `mermaid` if unclear.
 
+**Note:** For PlantUML files, always pass `-t plantuml`. The script auto-detects C4 macros (Person, System_Boundary, Component, etc.) and upgrades the kroki type to `c4plantuml` automatically.
+
 Run:
 
 ```bash
@@ -47,7 +49,17 @@ Or pipe from stdin:
 echo '<diagram text>' | python3 "${CLAUDE_SKILL_DIR}/diagram_url.py" to-url -t <type> -
 ```
 
-Return the resulting URL to the user.
+**Verification (REQUIRED):** After generating a kroki.io URL, always verify it returns HTTP 200 before giving it to the user or inserting into a file:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}" "<generated-url>"
+```
+
+If the response is not 200, fetch the error details with `curl -s "<url>" | head -5` and report the issue. Common causes:
+- Mermaid syntax errors: unescaped `;` (use `#59;`), unescaped `()` (use `#40;` `#41;`), or `<br/>` in unsupported contexts
+- File not saved before encoding (stale content)
+
+Return the resulting URL to the user only after successful verification.
 
 ### `to-diagram` — URL → Diagram
 
